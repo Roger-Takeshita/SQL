@@ -2,6 +2,7 @@
 
 - [Links](#links)
 - [Basics](#basics)
+  - [Concatenate Results](#concatenate-results)
 
 # Links
 
@@ -12,3 +13,14 @@
 # Basics
 
 [Go Back to Summary](#summary)
+
+## Concatenate Results
+
+-   Just like **&** in Excel, we can use `||` to concatenate results in SQL
+
+    ```SQL
+      SELECT e.firstname || ' ' || e.lastname AS "Employee Name",
+            boss.firstname || ' ' || boss.lastname AS "Boss"
+      FROM employee e
+        FULL JOIN employee boss ON e.reportsto = boss.employeeid;
+    ```
