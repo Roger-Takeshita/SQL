@@ -18,7 +18,7 @@ FROM track;
 --                      LINKE / ILIKE                    --
 -----------------------------------------------------------
 -- What are the longest songs (excluding video)?
--- ILIKE = case insensitve
+-- ILIKE = case insensitive
 -- LIKE = case sensitive
 SELECT track.name,
        track.milliseconds / 1000. / 60. AS minutes,
@@ -234,4 +234,179 @@ SELECT *,
        COALESCE(c.catalogpurchases,0) +COALESCE(o.onlinepurchases,0) AS total_sales
 FROM catalog c
   FULL JOIN online o ON c.customerid = o.customerid;
+
+-----------------------------------------------------------
+--                    WINDOW FUNCTIONS                   --
+-----------------------------------------------------------
+-- ATTENTION: Not all SQL supports window function
+-- Perform  calculation across a set of table rows that are somehow related to the current row + all the previous
+-- Applications:
+--   - Cumulative sales
+--   - Percentile rank
+--   - Group level results
+--
+--
+-----------------------------------------------------------
+--                           OVER                        --
+-----------------------------------------------------------
+-- SELECT SUM(< field1 >) OVER (ORDER BY< field2 >)
+-- FROM< TABLE>;
+--
+--
+-- Example, In this case the SUM is calculated dynamically
+SELECT invoicedate,
+       SUM(total) OVER (ORDER BY invoicedate)
+FROM invoice;
+
+-----------------------------------------------------------
+--                      PERCENTILES                      --
+-----------------------------------------------------------
+SELECT NTILE(< # OF groups >) OVER (ORDER BY< field >)
+FROM< TABLE>;
+
+SELECT name,
+       milliseconds,
+       NTILE(100) OVER (ORDER BY milliseconds DESC) AS percentile
+FROM track;
+
+-----------------------------------------------------------
+--                   GROUP LEVEL RESULTS                 --
+-----------------------------------------------------------
+-- SELECT AVG(< field1 >) OVER (PARTITION BY< field2 >)
+-- FROM< TABLE>;
+SELECT name,
+       genreid,
+       milliseconds,
+       AVG(milliseconds) OVER (PARTITION BY genreid)
+FROM track;
+
+-----------------------------------------------------------
+--                       SUBQUERIES                      --
+-----------------------------------------------------------
+WITH< subquery_name >
+AS
+(< code_for_subquery >) < code_for_parent_query >;
+
+WITH top_customers AS
+(
+  SELECT customerid,
+         SUM(total) AS sales
+  FROM invoice
+  GROUP BY customerid
+)
+SELECT COUNT(*)
+FROM top_customers
+WHERE sales > 40;
+
+-----------------------------------------------------------
+--                          VIEWS                        --
+-----------------------------------------------------------
+-- CREATE VIEW <view_name > AS <query_code >; COMMIT;
+-- When we create a view, this "table" will be permanently saved on the database. This way, anyone that has access to this table, will have access to this view
+-- ATTENTION: You can't have duplicate field names in a view
+-- IMPORTANT: This table is populated with new data that is coming in
+--
+--
+-- CREATE VIEW top_customers 
+-- AS
+-- SELECT customerid,
+--        SUM(total) AS sales
+-- FROM invoice
+-- GROUP BY customerid
+-- ORDER BY sales DESC;
+-----------------------------------------------------------
+--                      TEMPORAY TABLE                   --
+-----------------------------------------------------------
+-- This will permanetly create a copy of my data, but it's deleted after you logged out
+-- CREATE TEMP TABLE < table_name > AS < query_code >;
+-- ATTENTION: You can't have duplicate field names in a view
+-- IMPORTANT: This table is not populated with new data that is coming in, only if we updated the temporary table
+--
+--
+CREATE TEMP TABLE total_sales 
+AS
+SELECT customerid,
+       SUM(total) AS sales
+FROM invoice
+GROUP BY customerid
+ORDER BY sales DESC;
+
+-----------------------------------------------------------
+--                     EXERCISE 3                        --
+-----------------------------------------------------------
+-- How many iowa liquor vendors have more than $1 million in 2014 sales (hint: use subquery to group sales by vendor)?
+WITH vendor_sales
+AS
+(SELECT vendor,
+       vendor_no,
+       SUM(total)
+FROM iowa_sales
+WHERE EXTRACT(year FROM DATE) = 2014
+GROUP BY vendor,
+         vendor_no
+HAVING SUM(total) > 1000000) SELECT COUNT(*) FROM vendor_sales;
+
+-- Group sales by month with a subquery and then calculate cumulative sales by month for 2014 (using iowa sales table)
+-- WITH < subquery_name > AS (< code_for_subquery >) 
+-- < code_for_parent_query >;
+-- My Answer
+WITH sale_by_month
+AS
+(SELECT EXTRACT(YEAR FROM iowa_sales.date) AS YEAR,
+       EXTRACT(MONTH FROM iowa_sales.date) AS MONTH,
+       SUM(total) AS new_total
+FROM iowa_sales
+GROUP BY YEAR,
+         MONTH)
+SELECT SUM(new_total) OVER (ORDER BY month)
+FROM sale_by_month
+WHERE year = 2014;
+
+-- Professor Answer
+WITH monthly_sales
+AS
+(SELECT EXTRACT(month FROM DATE) AS month,
+       SUM(total) AS sales
+FROM iowa_sales
+WHERE EXTRACT(year FROM DATE) = 2014
+GROUP BY month)
+SELECT month,
+       sales / 1000000. AS month_sales,
+       TO_CHAR(sales,'999,999,999'),
+       SUM(sales) OVER (ORDER BY month) / 1000000. AS cum_sales
+FROM monthly_sales
+ORDER BY month;
+
+-- ------------------------------------------------------------
+WITH monthly_sales
+AS
+(SELECT EXTRACT(month FROM DATE) AS month,
+       EXTRACT(year FROM DATE) AS year,
+       SUM(total) AS sales
+FROM iowa_sales
+GROUP BY month,
+         year)
+SELECT month,
+       year,
+       sales / 1000000. AS month_sales,
+       SUM(sales) OVER (PARTITION BY year ORDER BY month) / 1000000. AS cum_sales
+FROM monthly_sales
+ORDER BY year,
+         month;
+
+-- Create a View that adds liquor type to the iowa product data.  Don't forget to commit your changes.
+IF EXISTS DROP TABLE new_iowa_products;
+
+CREATE VIEW new_iowa_products 
+AS
+
+(
+  SELECT CASE WHEN i.category_name ILIKE '%whisky%' THEN 'whisky' WHEN i.category_name ILIKE '%vodka%' THEN 'vodka' WHEN i.category_name ILIKE '%tequila%' THEN 'tequila' WHEN i.category_name ILIKE '%rum%' THEN 'rum' WHEN i.category_name ILIKE '%brandy%' THEN 'brandy' WHEN i.category_name ILIKE '%schnapps%' THEN 'schnapps' ELSE 'other' END AS liquor_type,
+  * FROM iowa_products AS i
+);
+
+COMMIT;
+
+SELECT *
+FROM new_iowa_products;
 
