@@ -1,7 +1,47 @@
 <h1 id='summary'>Summary</h1>
 
 - [LINKS](#links)
-- [BASICS](#basics)
+- [RELATIONAL DATABASE AND SQL](#relational-database-and-sql)
+  - [Anatomy of a Relational Database](#anatomy-of-a-relational-database)
+    - [Tables](#tables)
+    - [Columns](#columns)
+  - [Creating Database and a Table](#creating-database-and-a-table)
+  - [Creating a Table for a Related Data Entry](#creating-a-table-for-a-related-data-entry)
+- [PostgreSQL Commands](#postgresql-commands)
+  - [Terminal](#terminal)
+  - [Managing Databases](#managing-databases)
+    - [Create a Database](#create-a-database)
+    - [Delete a Database](#delete-a-database)
+  - [Managing Tables](#managing-tables)
+    - [Add a New Column to a Table](#add-a-new-column-to-a-table)
+    - [Delete a Column from a Table](#delete-a-column-from-a-table)
+    - [Rename a Column](#rename-a-column)
+    - [Rename a Table](#rename-a-table)
+  - [Managing Indexes](#managing-indexes)
+    - [Removing a Specified Index from a Table](#removing-a-specified-index-from-a-table)
+  - [Querying Data from Tables](#querying-data-from-tables)
+    - [Query All Data from a Table](#query-all-data-from-a-table)
+    - [Query Data from Specified Columns](#query-data-from-specified-columns)
+    - [Query Data Using a Filter - WHERE Operator](#query-data-using-a-filter---where-operator)
+    - [Query Data - LIKE Operator](#query-data---like-operator)
+    - [Query Data - IN Operator](#query-data---in-operator)
+    - [Query Data - Constrain the Returned Rows - LIMIT Operator](#query-data---constrain-the-returned-rows---limit-operator)
+    - [Query Data - JOIN](#query-data---join)
+    - [Return the Number of Rows of a Table](#return-the-number-of-rows-of-a-table)
+    - [Sort Rows in Ascending or Descending Order - ORDER BY](#sort-rows-in-ascending-or-descending-order---order-by)
+    - [Filter Groups - HAVING Clause](#filter-groups---having-clause)
+  - [Set Operations](#set-operations)
+    - [Combine the Result - Two or More Queries - UNION Operator](#combine-the-result---two-or-more-queries---union-operator)
+    - [Minus a Result - EXCEPT Operator](#minus-a-result---except-operator)
+    - [Get Intersection of the Result Sets of Two Queries](#get-intersection-of-the-result-sets-of-two-queries)
+  - [Modifying Data](#modifying-data)
+    - [Insert a New Row Into a Table](#insert-a-new-row-into-a-table)
+    - [Insert Multiple Rows Into a Table](#insert-multiple-rows-into-a-table)
+    - [Update Data for All Rows](#update-data-for-all-rows)
+    - [Update Data from a Set of Rows Specified by a Condition - WHERE clause](#update-data-from-a-set-of-rows-specified-by-a-condition---where-clause)
+    - [Delete All Rows of a Table](#delete-all-rows-of-a-table)
+    - [Delete a Specific Row Based on a Condition](#delete-a-specific-row-based-on-a-condition)
+- [ADVANCED](#advanced)
   - [Aliases](#aliases)
   - [Extract](#extract)
   - [Having](#having)
@@ -26,11 +66,326 @@
 
 # LINKS
 
--   [SQLWorkbenchJ](https://sql-workbench.eu/)
--   [Java](https://www.java.com/)
--   [PostgreSQL JDBC Driver](https://jdbc.postgresql.org/download.html)
+# RELATIONAL DATABASE AND SQL
 
-# BASICS
+## Anatomy of a Relational Database
+
+[Go Back to Summary](#summary)
+
+-   The structure of a a particular database is known as its **schema**.
+-   Schemas include the definition of such things as the database's:
+    -   Tables, including the number and data type of each column
+    -   Indexes for efficient access of data.
+    -   Constrains (rules, such as whether a field can e null or not)
+
+### Tables
+
+[Go Back to Summary](#summary)
+
+-   Database tables look like a spreadsheet since they consist of columns and rows.
+-   Tables are also known as **relations**.
+-   A single table in a relational database holds data for a particular data entry.
+-   Since only one type of data can be held in a single table, related data, we will have different tables storing different contents and tye are **linked** via what is known as a **foreign key (FK)**.
+
+-   **Foreign key** fields hold the value of its parent's **primary key (PK)**.
+-   The naming convention is typically snake_cased and always plural.
+
+### Columns
+
+[Go Back to Summary](#summary)
+
+-   The columns of a table have a:
+    -   Name
+    -   Data type
+    -   Optional contrains
+-   The typical naming convention is usually snake_cased and singular.
+
+-   PostgreSQL has [many data types](https://www.postgresql.org/docs/11/datatype.html) for columns, but common ones include:
+
+    -   Integer
+    -   Decimal
+    -   Varchar (variable-length strings)
+    -   Text (unlimited length strings)
+    -   Date (**does not** include time)
+    -   Timestamps (both date and time)
+    -   Boolean
+
+-   Common constrains for a column include:
+    -   `PRIMARY KEY`: column, or group of columns, uniquely identify a row.
+    -   `REFERENCES` (Foreign Key): value in column must match the primary key in another table.
+    -   `NOT NULL`: column must have a value, it cannot be empty (null).
+    -   `UNIQUE`: data in this column must be unique among all rous in the table.
+
+## Creating Database and a Table
+
+[Go Back to Summary](#summary)
+
+-   On terminal:
+
+    ```Bash
+       CREATE DATABASE music;
+
+       CREATE TABLE bands (
+          id serial PRIMARY KEY,  # serial is auto-incrementing integer
+          name varchar NOT NULL,
+          genre varchar
+       );
+    ```
+
+## Creating a Table for a Related Data Entry
+
+[Go Back to Summary](#summary)
+
+-   Let's say we have the following data relationship: `Band ----< Musician`
+    -   A Band has many Musicians and a Musician belongs to a Band
+-   Whenever you have a `one:many` relationship, the rows in the table for the many-side must include a column that references which row in the table on the on-side it belongs to.
+-   This column is known as a **foreign key (FK)**
+-   The FK must be the same data type is the primary key in the parent table (usually an integer).
+
+    ```Bash
+       CREATE TABLE musicians (
+          id serial PRIMARY KEY,
+          name varchar NOT NULL,
+          quote text,
+          band_id integer NOT NULL REFERENCES bands (id)
+       );
+    ```
+
+# PostgreSQL Commands
+
+## Terminal
+
+[Go Back to Summary](#summary)
+
+-   Run PostgreSQL on Terminal:
+
+    ```Bash
+       pqsl
+    ```
+
+-   Connect to a specific database:
+
+    ```Bash
+       \c <database_name>
+    ```
+
+-   To quit the psql
+
+    ```Bash
+       \q
+    ```
+
+-   To List all databases in the PostgreSQL database server
+
+    ```Bash
+       \l
+    ```
+
+-   To list all tables inside the databa_base that you are currentt using.
+
+    ```Bash
+       \d
+    ```
+
+## Managing Databases
+
+[Go Back to Summary](#summary)
+
+### Create a Database
+
+```Bash
+   CREATE DATABASE <database_name>;
+```
+
+### Delete a Database
+
+```Bash
+   DROP DATABASE <database_name>;
+```
+
+## Managing Tables
+
+[Go Back to Summary](#summary)
+
+### Add a New Column to a Table
+
+```Bash
+   ALTER TABLE <table_name> ADD COLUMN <column_name> <DATA_TYPE>;
+```
+
+### Delete a Column from a Table
+
+```Bash
+   ALTER TABLE <table_name> DROP COLUMN <column_name>;
+```
+
+### Rename a Column
+
+```Bash
+   ALTER TABLE <table_name> RENAME <column_name> TO <new_column_name>;
+```
+
+### Rename a Table
+
+```Bash
+   ALTER TABLE <table_name> RENAME TO <new_table_name>;
+```
+
+## Managing Indexes
+
+[Go Back to Summary](#summary)
+
+### Removing a Specified Index from a Table
+
+```Bash
+   DROP INDEX <index_name>;
+```
+
+## Querying Data from Tables
+
+[Go Back to Summary](#summary)
+
+### Query All Data from a Table
+
+```Bash
+   SELECT * FROM <table_name>;
+```
+
+### Query Data from Specified Columns
+
+```Bash
+   SELECT <column_name_1>, <column_name_2>, ... FROM <table_name>;
+```
+
+### Query Data Using a Filter - WHERE Operator
+
+```Bash
+   SELECT * FROM <table_name> WHERE <condition>;
+```
+
+### Query Data - LIKE Operator
+
+```Bash
+   SELECT * FROM <table_name> WHERE <column_name> LIKE '%value%';
+```
+
+### Query Data - IN Operator
+
+```Bash
+   SELECT * FROM <table_name> WHERE <column_name> IN (value_1, value2, ...);
+```
+
+### Query Data - Constrain the Returned Rows - LIMIT Operator
+
+```Bash
+   SELECT * FROM <table_name> LIMIT <limit> OFFSET <offset> ORDER BY <column_name>;
+```
+
+### Query Data - JOIN
+
+-   INNER JOIN, LEFT JOIN, FULL OUTER JOIN, CROSS JOIN and NATURAL JOIN
+
+    ```Bash
+      SELECT * FROM <table_name_1> INNER JOIN <table_name_2> ON <conditions>;
+    ```
+
+    ```Bash
+      SELECT * FROM <table_name_1> LEFT JOIN <table_name_2> ON <conditions>;
+    ```
+
+    ```Bash
+      SELECT * FROM <table_name_1> FULL OUTER JOIN <table_name_2> ON <conditions>;
+    ```
+
+    ```Bash
+      SELECT * FROM <table_name_1> CROSS JOIN <table_name_2> ON <conditions>;
+    ```
+
+    ```Bash
+      SELECT * FROM <table_name_1> NATURAL JOIN <table_name_2> ON <conditions>;
+    ```
+
+### Return the Number of Rows of a Table
+
+```Bash
+   SELECT COUNT (*) FROM <table_name>;
+```
+
+### Sort Rows in Ascending or Descending Order - ORDER BY
+
+```Bash
+   SELECT * FROM <table_name> ORDER BY <column_name_1>, <column_name_2>, ...;
+```
+
+### Filter Groups - HAVING Clause
+
+```Bash
+   SELECT * FROM <table_name> GROUP BY <column_name> HAVING <condition>;
+```
+
+## Set Operations
+
+[Go Back to Summary](#summary)
+
+### Combine the Result - Two or More Queries - UNION Operator
+
+```Bash
+   SELECT * FROM <table_name_1> UNION SELECT * FROM <table_name_2>;
+```
+
+### Minus a Result - EXCEPT Operator
+
+```Bash
+   SELECT * FROM <table_name_1> EXCEPT SELECT * FROM <table_name_2>;
+```
+
+### Get Intersection of the Result Sets of Two Queries
+
+```Bash
+   SELECT * FROM <table_name_1> INTERSECT SELECT * FROM <tabble_name_2>;
+```
+
+## Modifying Data
+
+[Go Back to Summary](#summary)
+
+### Insert a New Row Into a Table
+
+```Bash
+   INSERT INTO <table_name> (<column_name_1>, <column_name_2, ...) VALUES (<value_1>, <value_2>, ...);
+```
+
+### Insert Multiple Rows Into a Table
+
+```Bash
+   INSERT INTO <table_name> (<column_name_1>, <column_name_2>, ...) VALUES (<value_1>, <value_2>, ...), (<value_1>, <value_2>, ...), (<value_1>, <value_2>, ...) ...;
+```
+
+### Update Data for All Rows
+
+```Bash
+   UPDATE <table_name> SET <column_name_1> = <value_1>, ...;
+```
+
+### Update Data from a Set of Rows Specified by a Condition - WHERE clause
+
+```Bash
+   UPDATE <table_name> SET <column_name_1> = <value_1>, ... WHERE <conditions>;
+```
+
+### Delete All Rows of a Table
+
+```Bash
+   DELETE FROM <table_name>;
+```
+
+### Delete a Specific Row Based on a Condition
+
+```Bash
+   DELETE FROM <table_name> WHERE <condition>;
+```
+
+# ADVANCED
 
 [Go Back to Summary](#summary)
 
