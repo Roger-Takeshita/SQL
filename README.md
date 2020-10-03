@@ -1,6 +1,5 @@
 <h1 id='summary'>Summary</h1>
 
-- [LINKS](#links)
 - [RELATIONAL DATABASE AND SQL](#relational-database-and-sql)
   - [Anatomy of a Relational Database](#anatomy-of-a-relational-database)
     - [Tables](#tables)
@@ -64,92 +63,90 @@
   - [Exercise 3](#exercise-3)
   - [Exercise 4](#exercise-4)
 
-# LINKS
-
 # RELATIONAL DATABASE AND SQL
 
 ## Anatomy of a Relational Database
 
 [Go Back to Summary](#summary)
 
--   The structure of a a particular database is known as its **schema**.
--   Schemas include the definition of such things as the database's:
-    -   Tables, including the number and data type of each column
-    -   Indexes for efficient access of data.
-    -   Constrains (rules, such as whether a field can e null or not)
+- The structure of a a particular database is known as its **schema**.
+- Schemas include the definition of such things as the database's:
+  - Tables, including the number and data type of each column
+  - Indexes for efficient access of data.
+  - Constrains (rules, such as whether a field can e null or not)
 
 ### Tables
 
 [Go Back to Summary](#summary)
 
--   Database tables look like a spreadsheet since they consist of columns and rows.
--   Tables are also known as **relations**.
--   A single table in a relational database holds data for a particular data entry.
--   Since only one type of data can be held in a single table, related data, we will have different tables storing different contents and tye are **linked** via what is known as a **foreign key (FK)**.
+- Database tables look like a spreadsheet since they consist of columns and rows.
+- Tables are also known as **relations**.
+- A single table in a relational database holds data for a particular data entry.
+- Since only one type of data can be held in a single table, related data, we will have different tables storing different contents and tye are **linked** via what is known as a **foreign key (FK)**.
 
--   **Foreign key** fields hold the value of its parent's **primary key (PK)**.
--   The naming convention is typically snake_cased and always plural.
+- **Foreign key** fields hold the value of its parent's **primary key (PK)**.
+- The naming convention is typically snake_cased and always plural.
 
 ### Columns
 
 [Go Back to Summary](#summary)
 
--   The columns of a table have a:
-    -   Name
-    -   Data type
-    -   Optional contrains
--   The typical naming convention is usually snake_cased and singular.
+- The columns of a table have a:
+  - Name
+  - Data type
+  - Optional contrains
+- The typical naming convention is usually snake_cased and singular.
 
--   PostgreSQL has [many data types](https://www.postgresql.org/docs/11/datatype.html) for columns, but common ones include:
+- PostgreSQL has [many data types](https://www.postgresql.org/docs/11/datatype.html) for columns, but common ones include:
 
-    -   Integer
-    -   Decimal
-    -   Varchar (variable-length strings)
-    -   Text (unlimited length strings)
-    -   Date (**does not** include time)
-    -   Timestamps (both date and time)
-    -   Boolean
+  - Integer
+  - Decimal
+  - Varchar (variable-length strings)
+  - Text (unlimited length strings)
+  - Date (**does not** include time)
+  - Timestamps (both date and time)
+  - Boolean
 
--   Common constrains for a column include:
-    -   `PRIMARY KEY`: column, or group of columns, uniquely identify a row.
-    -   `REFERENCES` (Foreign Key): value in column must match the primary key in another table.
-    -   `NOT NULL`: column must have a value, it cannot be empty (null).
-    -   `UNIQUE`: data in this column must be unique among all rous in the table.
+- Common constrains for a column include:
+  - `PRIMARY KEY`: column, or group of columns, uniquely identify a row.
+  - `REFERENCES` (Foreign Key): value in column must match the primary key in another table.
+  - `NOT NULL`: column must have a value, it cannot be empty (null).
+  - `UNIQUE`: data in this column must be unique among all rous in the table.
 
 ## Creating Database and a Table
 
 [Go Back to Summary](#summary)
 
--   On terminal:
+- On terminal:
 
-    ```Bash
-       CREATE DATABASE music;
+  ```Bash
+     CREATE DATABASE music;
 
-       CREATE TABLE bands (
-          id serial PRIMARY KEY,  # serial is auto-incrementing integer
-          name varchar NOT NULL,
-          genre varchar
-       );
-    ```
+     CREATE TABLE bands (
+        id serial PRIMARY KEY,  # serial is auto-incrementing integer
+        name varchar NOT NULL,
+        genre varchar
+     );
+  ```
 
 ## Creating a Table for a Related Data Entry
 
 [Go Back to Summary](#summary)
 
--   Let's say we have the following data relationship: `Band ----< Musician`
-    -   A Band has many Musicians and a Musician belongs to a Band
--   Whenever you have a `one:many` relationship, the rows in the table for the many-side must include a column that references which row in the table on the on-side it belongs to.
--   This column is known as a **foreign key (FK)**
--   The FK must be the same data type is the primary key in the parent table (usually an integer).
+- Let's say we have the following data relationship: `Band ----< Musician`
+  - A Band has many Musicians and a Musician belongs to a Band
+- Whenever you have a `one:many` relationship, the rows in the table for the many-side must include a column that references which row in the table on the on-side it belongs to.
+- This column is known as a **foreign key (FK)**
+- The FK must be the same data type is the primary key in the parent table (usually an integer).
 
-    ```Bash
-       CREATE TABLE musicians (
-          id serial PRIMARY KEY,
-          name varchar NOT NULL,
-          quote text,
-          band_id integer NOT NULL REFERENCES bands (id)
-       );
-    ```
+  ```Bash
+     CREATE TABLE musicians (
+        id serial PRIMARY KEY,
+        name varchar NOT NULL,
+        quote text,
+        band_id integer NOT NULL REFERENCES bands (id)
+     );
+  ```
 
 # PostgreSQL Commands
 
@@ -157,35 +154,35 @@
 
 [Go Back to Summary](#summary)
 
--   Run PostgreSQL on Terminal:
+- Run PostgreSQL on Terminal:
 
-    ```Bash
-       pqsl
-    ```
+  ```Bash
+     pqsl
+  ```
 
--   Connect to a specific database:
+- Connect to a specific database:
 
-    ```Bash
-       \c <database_name>
-    ```
+  ```Bash
+     \c <database_name>
+  ```
 
--   To quit the psql
+- To quit the psql
 
-    ```Bash
-       \q
-    ```
+  ```Bash
+     \q
+  ```
 
--   To List all databases in the PostgreSQL database server
+- To List all databases in the PostgreSQL database server
 
-    ```Bash
-       \l
-    ```
+  ```Bash
+     \l
+  ```
 
--   To list all tables inside the databa_base that you are currentt using.
+- To list all tables inside the databa_base that you are currentt using.
 
-    ```Bash
-       \d
-    ```
+  ```Bash
+     \d
+  ```
 
 ## Managing Databases
 
@@ -283,27 +280,27 @@
 
 ### Query Data - JOIN
 
--   INNER JOIN, LEFT JOIN, FULL OUTER JOIN, CROSS JOIN and NATURAL JOIN
+- INNER JOIN, LEFT JOIN, FULL OUTER JOIN, CROSS JOIN and NATURAL JOIN
 
-    ```Bash
-      SELECT * FROM <table_name_1> INNER JOIN <table_name_2> ON <conditions>;
-    ```
+  ```Bash
+    SELECT * FROM <table_name_1> INNER JOIN <table_name_2> ON <conditions>;
+  ```
 
-    ```Bash
-      SELECT * FROM <table_name_1> LEFT JOIN <table_name_2> ON <conditions>;
-    ```
+  ```Bash
+    SELECT * FROM <table_name_1> LEFT JOIN <table_name_2> ON <conditions>;
+  ```
 
-    ```Bash
-      SELECT * FROM <table_name_1> FULL OUTER JOIN <table_name_2> ON <conditions>;
-    ```
+  ```Bash
+    SELECT * FROM <table_name_1> FULL OUTER JOIN <table_name_2> ON <conditions>;
+  ```
 
-    ```Bash
-      SELECT * FROM <table_name_1> CROSS JOIN <table_name_2> ON <conditions>;
-    ```
+  ```Bash
+    SELECT * FROM <table_name_1> CROSS JOIN <table_name_2> ON <conditions>;
+  ```
 
-    ```Bash
-      SELECT * FROM <table_name_1> NATURAL JOIN <table_name_2> ON <conditions>;
-    ```
+  ```Bash
+    SELECT * FROM <table_name_1> NATURAL JOIN <table_name_2> ON <conditions>;
+  ```
 
 ### Return the Number of Rows of a Table
 
@@ -389,76 +386,76 @@
 
 [Go Back to Summary](#summary)
 
--   **SELECT**: choose the fields for query
--   **FROM**: pick table(s) fro data source
--   **WHERE**: filter data based upon conditions
--   **GROUP BY**: segment data into groups
--   **ORDER BY**: sort results
--   **LIMIT**: limit the number of records returned
--   **JOIN Types**:
-    -   INNER vs. OUTER
-    -   LEFT vs. RIGHT
+- **SELECT**: choose the fields for query
+- **FROM**: pick table(s) fro data source
+- **WHERE**: filter data based upon conditions
+- **GROUP BY**: segment data into groups
+- **ORDER BY**: sort results
+- **LIMIT**: limit the number of records returned
+- **JOIN Types**:
+  - INNER vs. OUTER
+  - LEFT vs. RIGHT
 
 ## Aliases
 
 [Go Back to Summary](#summary)
 
--   Rename fields in your queries:
+- Rename fields in your queries:
 
-    ```SQL
-      SELECT <field> AS <alias>
-    ```
+  ```SQL
+    SELECT <field> AS <alias>
+  ```
 
-    ```SQL
-      SELECT milliseconds/1000. AS seconds
-    ```
+  ```SQL
+    SELECT milliseconds/1000. AS seconds
+  ```
 
--   Reference tables as abbreviations:
+- Reference tables as abbreviations:
 
-    ```SQL
-      FROM <table> <alias>
-    ```
+  ```SQL
+    FROM <table> <alias>
+  ```
 
-    ```SQL
-      FROM track t
-      JOIN genre g ON t.genreid = g.genreid;
-    ```
+  ```SQL
+    FROM track t
+    JOIN genre g ON t.genreid = g.genreid;
+  ```
 
-    ```SQL
-      SELECT g.name,
-             AVG(t.milliseconds) / 1000. / 60. AS minutes
-      FROM track t
-        JOIN mediatype m ON t.mediatypeid = m.mediatypeid
-        JOIN genre g ON t.genreid = g.genreid
-      WHERE m.name LIKE '%audio%'
-      GROUP BY g.name
-      ORDER BY minutes DESC;
-    ```
+  ```SQL
+    SELECT g.name,
+           AVG(t.milliseconds) / 1000. / 60. AS minutes
+    FROM track t
+      JOIN mediatype m ON t.mediatypeid = m.mediatypeid
+      JOIN genre g ON t.genreid = g.genreid
+    WHERE m.name LIKE '%audio%'
+    GROUP BY g.name
+    ORDER BY minutes DESC;
+  ```
 
--   Reference fields by position:
+- Reference fields by position:
 
-    ```SQL
-      SELECT <field1>, <field2>
-      FROM <table>
-      ORDER BY 1, 2
-    ```
+  ```SQL
+    SELECT <field1>, <field2>
+    FROM <table>
+    ORDER BY 1, 2
+  ```
 
-    ```SQL
-      SELECT name, milliseconds
-      FROM track
-      ORDER BY 2 DESC
-    ```
+  ```SQL
+    SELECT name, milliseconds
+    FROM track
+    ORDER BY 2 DESC
+  ```
 
-    ```SQL
-      SELECT g.name,
-             AVG(t.milliseconds) / 1000. / 60. AS minutes
-      FROM track t
-        JOIN mediatype m ON t.mediatypeid = m.mediatypeid
-        JOIN genre g ON t.genreid = g.genreid
-      WHERE m.name LIKE '%audio%'
-      GROUP BY g.name
-      ORDER BY 2 DESC;
-    ```
+  ```SQL
+    SELECT g.name,
+           AVG(t.milliseconds) / 1000. / 60. AS minutes
+    FROM track t
+      JOIN mediatype m ON t.mediatypeid = m.mediatypeid
+      JOIN genre g ON t.genreid = g.genreid
+    WHERE m.name LIKE '%audio%'
+    GROUP BY g.name
+    ORDER BY 2 DESC;
+  ```
 
 ## Extract
 
@@ -473,11 +470,11 @@
   FROM invoice;
 ```
 
--   Date/Time components
-    -   Day, Month, Year
-    -   Week, Month
-    -   Hour, Minute, Second
-    -   DOW, DOY, Quarter, Timezone
+- Date/Time components
+  - Day, Month, Year
+  - Week, Month
+  - Hour, Minute, Second
+  - DOW, DOY, Quarter, Timezone
 
 ## Having
 
@@ -519,14 +516,14 @@
 
 ## Concatenate Results
 
--   Just like **&** in Excel, we can use `||` to concatenate results in SQL
+- Just like **&** in Excel, we can use `||` to concatenate results in SQL
 
-    ```SQL
-      SELECT e.firstname || ' ' || e.lastname AS "Employee Name",
-             boss.firstname || ' ' || boss.lastname AS "Boss"
-      FROM employee e
-      FULL JOIN employee boss ON e.reportsto = boss.employeeid;
-    ```
+  ```SQL
+    SELECT e.firstname || ' ' || e.lastname AS "Employee Name",
+           boss.firstname || ' ' || boss.lastname AS "Boss"
+    FROM employee e
+    FULL JOIN employee boss ON e.reportsto = boss.employeeid;
+  ```
 
 ## SUM
 
@@ -542,96 +539,96 @@
 
 [Go Back to Summary](#summary)
 
--   `ILIKE` = case insensitive
+- `ILIKE` = case insensitive
 
-    ```SQL
-      SELECT g.name,
-            AVG(t.milliseconds) / 1000. / 60. AS minutes
-      FROM track t
-        JOIN mediatype m ON t.mediatypeid = m.mediatypeid
-        JOIN genre g ON t.genreid = g.genreid
-      WHERE m.name LIKE '%audio%'
-      GROUP BY g.name
-      ORDER BY 2 DESC;
-    ```
+  ```SQL
+    SELECT g.name,
+          AVG(t.milliseconds) / 1000. / 60. AS minutes
+    FROM track t
+      JOIN mediatype m ON t.mediatypeid = m.mediatypeid
+      JOIN genre g ON t.genreid = g.genreid
+    WHERE m.name LIKE '%audio%'
+    GROUP BY g.name
+    ORDER BY 2 DESC;
+  ```
 
--   `LIKE` = case sensitive
+- `LIKE` = case sensitive
 
-    ```SQL
-      SELECT genre.name,
-            AVG(track.milliseconds) / 1000. / 60. AS minutes
-      FROM track
-        JOIN mediatype ON track.mediatypeid = mediatype.mediatypeid
-        JOIN genre ON track.genreid = genre.genreid
-      WHERE mediatype.name LIKE '%audio%'
-      GROUP BY genre.name
-      HAVING AVG(track.milliseconds) / 1000. / 60. >= 3
-      ORDER BY minutes DESC;
-    ```
+  ```SQL
+    SELECT genre.name,
+          AVG(track.milliseconds) / 1000. / 60. AS minutes
+    FROM track
+      JOIN mediatype ON track.mediatypeid = mediatype.mediatypeid
+      JOIN genre ON track.genreid = genre.genreid
+    WHERE mediatype.name LIKE '%audio%'
+    GROUP BY genre.name
+    HAVING AVG(track.milliseconds) / 1000. / 60. >= 3
+    ORDER BY minutes DESC;
+  ```
 
 ## Case Statements
 
 [Go Back to Summary](#summary)
 
--   Just like a `switch/case` in JavaScript
+- Just like a `switch/case` in JavaScript
 
-    ```SQL
-      SELECT CASE
-        WHEN < condition_1 > THEN < result_1 >
-        WHEN < condition_2 > THEN < result_2 >
-        ELSE <result_3 >
-      END;
-    ```
+  ```SQL
+    SELECT CASE
+      WHEN < condition_1 > THEN < result_1 >
+      WHEN < condition_2 > THEN < result_2 >
+      ELSE <result_3 >
+    END;
+  ```
 
-    ```SQL
-      SELECT CASE
-        WHEN AGE < 18 THEN 'child'
-        WHEN AGE >= 60 THEN 'senior'
-        ELSE 'adult'
-      END AS age_market_segment;
-    ```
+  ```SQL
+    SELECT CASE
+      WHEN AGE < 18 THEN 'child'
+      WHEN AGE >= 60 THEN 'senior'
+      ELSE 'adult'
+    END AS age_market_segment;
+  ```
 
 ## Union
 
 [Go Back to Summary](#summary)
 
--   Merges data from two queries by stacking results on top of each other
--   Must have same number of columns and corresponding data types
--   Duplicate results are removed by default
--   `UNION ALL` will **include duplicates**
+- Merges data from two queries by stacking results on top of each other
+- Must have same number of columns and corresponding data types
+- Duplicate results are removed by default
+- `UNION ALL` will **include duplicates**
 
-    ```SQL
-      SELECT *
-      FROM< table1 >
-      UNION
-      SELECT *
-      FROM< table2 >;
-    ```
+  ```SQL
+    SELECT *
+    FROM< table1 >
+    UNION
+    SELECT *
+    FROM< table2 >;
+  ```
 
 ## Coalesce
 
 [Go Back to Summary](#summary)
 
--   Picks first non-null value
+- Picks first non-null value
 
-    ```SQL
-      COALESCE ([field1], [field2], [field3])
-    ```
+  ```SQL
+    COALESCE ([field1], [field2], [field3])
+  ```
 
-    ```SQL
-      COALESCE(online.firstname, catalog.firstname) AS firstname
-    ```
+  ```SQL
+    COALESCE(online.firstname, catalog.firstname) AS firstname
+  ```
 
 ## Window Functions
 
 [Go Back to Summary](#summary)
 
--   **ATTENTION:** Not all SQL supports window function
--   Perform calculation across a set of table rows that are somehow related to the current row + all the previous
--   Applications:
-    -   Cumulative sales
-    -   Percentile rank
-    -   Group level results
+- **ATTENTION:** Not all SQL supports window function
+- Perform calculation across a set of table rows that are somehow related to the current row + all the previous
+- Applications:
+  - Cumulative sales
+  - Percentile rank
+  - Group level results
 
 ### Cumulative Sales
 
@@ -642,13 +639,13 @@
   FROM< TABLE>;
 ```
 
--   Example, In this case the SUM is calculated dynamically
+- Example, In this case the SUM is calculated dynamically
 
-    ```SQL
-      SELECT invoicedate,
-            SUM(total) OVER (ORDER BY invoicedate)
-      FROM invoice;
-    ```
+  ```SQL
+    SELECT invoicedate,
+          SUM(total) OVER (ORDER BY invoicedate)
+    FROM invoice;
+  ```
 
 ### Percentiles
 
@@ -710,43 +707,43 @@
 
 [Go Back to Summary](#summary)
 
--   When we create a view, this "table" will be permanently saved on the database. This way, anyone that has access to this table, will have access to this view
--   **ATTENTION:** You can't have duplicate field names in a view
--   **IMPORTANT:** This table is populated with new data
+- When we create a view, this "table" will be permanently saved on the database. This way, anyone that has access to this table, will have access to this view
+- **ATTENTION:** You can't have duplicate field names in a view
+- **IMPORTANT:** This table is populated with new data
 
-    ```SQL
-      CREATE VIEW <view_name > AS <query_code >; COMMIT;
-    ```
+  ```SQL
+    CREATE VIEW <view_name > AS <query_code >; COMMIT;
+  ```
 
-    ```SQL
-      CREATE VIEW top_customers AS
-          SELECT customerid,
-                SUM(total) AS sales
-          FROM invoice
-          GROUP BY customerid
-          ORDER BY sales DESC;
-    ```
+  ```SQL
+    CREATE VIEW top_customers AS
+        SELECT customerid,
+              SUM(total) AS sales
+        FROM invoice
+        GROUP BY customerid
+        ORDER BY sales DESC;
+  ```
 
 ### Temporary Tables
 
 [Go Back to Summary](#summary)
 
--   This will permanently create a copy of my data, but it's **deleted after you logged out**
--   **ATTENTION:** You can't have duplicate field names in a view
--   **IMPORTANT:** This table is not populated with new data that is coming in, only if we updated the temporary table
+- This will permanently create a copy of my data, but it's **deleted after you logged out**
+- **ATTENTION:** You can't have duplicate field names in a view
+- **IMPORTANT:** This table is not populated with new data that is coming in, only if we updated the temporary table
 
-    ```SQL
-      CREATE TEMP TABLE < view_name > AS < query_code >;
-    ```
+  ```SQL
+    CREATE TEMP TABLE < view_name > AS < query_code >;
+  ```
 
-    ```SQL
-      CREATE TEMP TABLE total_sales AS
-          SELECT customerid,
-                SUM(total) AS sales
-          FROM invoice
-          GROUP BY customerid
-          ORDER BY sales DESC;
-    ```
+  ```SQL
+    CREATE TEMP TABLE total_sales AS
+        SELECT customerid,
+              SUM(total) AS sales
+        FROM invoice
+        GROUP BY customerid
+        ORDER BY sales DESC;
+  ```
 
 # EXERCISES
 
@@ -756,137 +753,137 @@
 
 [Go Back to Summary](#summary)
 
--   How many days of content are there in the library?
+- How many days of content are there in the library?
 
-    ```SQL
-      SELECT SUM(milliseconds) / 1000. / 60. / 60. / 24. AS days
-      FROM track;
-      --  15.958079
-    ```
+  ```SQL
+    SELECT SUM(milliseconds) / 1000. / 60. / 60. / 24. AS days
+    FROM track;
+    --  15.958079
+  ```
 
--   What are the longest songs (excluding video)?
+- What are the longest songs (excluding video)?
 
-    ```SQL
-      SELECT track.name,
-            track.milliseconds / 1000. / 60. AS minutes,
-            mediatype.name
-      FROM track
-        JOIN mediatype ON track.mediatypeid = mediatype.mediatypeid
-      WHERE mediatype.name ILIKE '%AUDIO%'
-      ORDER BY track.milliseconds DESC LIMIT 100;
-    ```
+  ```SQL
+    SELECT track.name,
+          track.milliseconds / 1000. / 60. AS minutes,
+          mediatype.name
+    FROM track
+      JOIN mediatype ON track.mediatypeid = mediatype.mediatypeid
+    WHERE mediatype.name ILIKE '%AUDIO%'
+    ORDER BY track.milliseconds DESC LIMIT 100;
+  ```
 
--   What is the average length of a song grouped by genre (convert time to minutes)?
+- What is the average length of a song grouped by genre (convert time to minutes)?
 
-    ```SQL
-      SELECT genre.name,
-             AVG(track.milliseconds) / 1000. / 60. AS minutes
-      FROM track
-        JOIN mediatype ON track.mediatypeid = mediatype.mediatypeid
-        JOIN genre ON track.genreid = genre.genreid
-      WHERE mediatype.name LIKE '%audio%'
-      GROUP BY genre.name
-      ORDER BY minutes DESC;
-    ```
+  ```SQL
+    SELECT genre.name,
+           AVG(track.milliseconds) / 1000. / 60. AS minutes
+    FROM track
+      JOIN mediatype ON track.mediatypeid = mediatype.mediatypeid
+      JOIN genre ON track.genreid = genre.genreid
+    WHERE mediatype.name LIKE '%audio%'
+    GROUP BY genre.name
+    ORDER BY minutes DESC;
+  ```
 
 ## Exercise 2
 
 [Go Back to Summary](#summary)
 
--   Which customers have spent more than \$40 (Use Group By and Having for the customer and invoice tables)?
+- Which customers have spent more than \$40 (Use Group By and Having for the customer and invoice tables)?
 
-    ```SQL
-      SELECT customer.firstname,
+  ```SQL
+    SELECT customer.firstname,
+          customer.lastname,
+          invoice.customerid,
+          SUM(invoice.total)
+    FROM customer
+      JOIN invoice ON invoice.customerid = customer.customerid
+    GROUP BY customer.firstname,
             customer.lastname,
-            invoice.customerid,
-            SUM(invoice.total)
-      FROM customer
-        JOIN invoice ON invoice.customerid = customer.customerid
-      GROUP BY customer.firstname,
-              customer.lastname,
-              invoice.customerid
-      HAVING SUM(invoice.total) > 40;
-    ```
+            invoice.customerid
+    HAVING SUM(invoice.total) > 40;
+  ```
 
--   What are the total sales by month (Use Extract and Group By and the invoice table)?
+- What are the total sales by month (Use Extract and Group By and the invoice table)?
 
-    ```SQL
-      SELECT EXTRACT(month FROM invoicedate) AS month,
-            SUM(invoice.total) AS total
-      FROM invoice
-      GROUP BY month
-      ORDER BY total DESC;
+  ```SQL
+    SELECT EXTRACT(month FROM invoicedate) AS month,
+          SUM(invoice.total) AS total
+    FROM invoice
+    GROUP BY month
+    ORDER BY total DESC;
 
-      SELECT EXTRACT(month FROM invoicedate) AS month,
-            SUM(invoice.total)
-      FROM invoice
-      GROUP BY month
-      ORDER BY SUM(invoice.total) DESC;
-    ```
+    SELECT EXTRACT(month FROM invoicedate) AS month,
+          SUM(invoice.total)
+    FROM invoice
+    GROUP BY month
+    ORDER BY SUM(invoice.total) DESC;
+  ```
 
--   Create a roster of employees with their bosses (Join the employee table to itself by using table aliases)
+- Create a roster of employees with their bosses (Join the employee table to itself by using table aliases)
 
-    ```SQL
-      SELECT t1.firstname,
-            t1.lastname,
-            t2.firstname,
-            t2.lastname
-      FROM employee t1
-        LEFT JOIN employee t2 ON t1.reportsto = t2.employeeid;
-    ```
+  ```SQL
+    SELECT t1.firstname,
+          t1.lastname,
+          t2.firstname,
+          t2.lastname
+    FROM employee t1
+      LEFT JOIN employee t2 ON t1.reportsto = t2.employeeid;
+  ```
 
-    -   Different solution
+  - Different solution
 
-    ```SQL
-      SELECT e.firstname || ' ' || e.lastname AS "Employee Name",
-            boss.firstname || ' ' || boss.lastname AS "Boss"
-      FROM employee e
-        FULL JOIN employee boss ON e.reportsto = boss.employeeid;
-    ```
+  ```SQL
+    SELECT e.firstname || ' ' || e.lastname AS "Employee Name",
+          boss.firstname || ' ' || boss.lastname AS "Boss"
+    FROM employee e
+      FULL JOIN employee boss ON e.reportsto = boss.employeeid;
+  ```
 
 ## Exercise 3
 
 [Go Back to Summary](#summary)
 
--   Using the iowa liquor products table, create an alcohol type label for whisky, vodka, tequila, rum, brandy, schnapps and any other liquor types (hint: use `CASE STATEMENT` and `LIKE`)
+- Using the iowa liquor products table, create an alcohol type label for whisky, vodka, tequila, rum, brandy, schnapps and any other liquor types (hint: use `CASE STATEMENT` and `LIKE`)
 
-    ```SQL
-      SELECT DISTINCT category_name,
-            CASE
-              WHEN category_name ILIKE '%schnapps%' THEN 'schnapps'
-              WHEN category_name ILIKE '%wisk%' OR category_name ILIKE '%scotch%' THEN 'whiskey'
-              WHEN category_name ILIKE '%vodka%' THEN 'vodka'
-              WHEN category_name ILIKE '%rum%' THEN 'rum'
-              WHEN category_name ILIKE '%brand%' THEN 'brandy'
-              WHEN category_name ILIKE '%gin%' THEN 'gin'
-              ELSE 'Other'
-            END AS liquor_type
-      FROM iowa_products
-      ORDER BY liquor_type;
-    ```
+  ```SQL
+    SELECT DISTINCT category_name,
+          CASE
+            WHEN category_name ILIKE '%schnapps%' THEN 'schnapps'
+            WHEN category_name ILIKE '%wisk%' OR category_name ILIKE '%scotch%' THEN 'whiskey'
+            WHEN category_name ILIKE '%vodka%' THEN 'vodka'
+            WHEN category_name ILIKE '%rum%' THEN 'rum'
+            WHEN category_name ILIKE '%brand%' THEN 'brandy'
+            WHEN category_name ILIKE '%gin%' THEN 'gin'
+            ELSE 'Other'
+          END AS liquor_type
+    FROM iowa_products
+    ORDER BY liquor_type;
+  ```
 
--   Adding a counter
+- Adding a counter
 
-    ```SQL
-      SELECT category_name,
-            CASE
-              WHEN category_name ILIKE '%schnapps%' THEN 'schnapps'
-              WHEN category_name ILIKE '%wisk%' OR category_name ILIKE '%scotch%' THEN 'whiskey'
-              WHEN category_name ILIKE '%vodka%' THEN 'vodka'
-              WHEN category_name ILIKE '%rum%' THEN 'rum'
-              WHEN category_name ILIKE '%brand%' THEN 'brandy'
-              WHEN category_name ILIKE '%gin%' THEN 'gin'
-              ELSE 'Other'
-            END AS liquor_type,
-            COUNT(*)
-      FROM iowa_products
-      GROUP BY liquor_type,
-              category_name
-      ORDER BY liquor_type,
-              category_name;
-    ```
+  ```SQL
+    SELECT category_name,
+          CASE
+            WHEN category_name ILIKE '%schnapps%' THEN 'schnapps'
+            WHEN category_name ILIKE '%wisk%' OR category_name ILIKE '%scotch%' THEN 'whiskey'
+            WHEN category_name ILIKE '%vodka%' THEN 'vodka'
+            WHEN category_name ILIKE '%rum%' THEN 'rum'
+            WHEN category_name ILIKE '%brand%' THEN 'brandy'
+            WHEN category_name ILIKE '%gin%' THEN 'gin'
+            ELSE 'Other'
+          END AS liquor_type,
+          COUNT(*)
+    FROM iowa_products
+    GROUP BY liquor_type,
+            category_name
+    ORDER BY liquor_type,
+            category_name;
+  ```
 
--   Using the catalog and online tables, create a customer list that combines the names from the catalog and online tables using UNION without creating duplicates.
+- Using the catalog and online tables, create a customer list that combines the names from the catalog and online tables using UNION without creating duplicates.
 
 ```SQL
   SELECT customerid,
@@ -902,32 +899,32 @@
            "Last Name";
 ```
 
--   `FULL JOIN` the catalog and online tables and inspect the results. Try adding the catalog sales and online sales totals together. Why do you get errors?
--   Wrong answer:
+- `FULL JOIN` the catalog and online tables and inspect the results. Try adding the catalog sales and online sales totals together. Why do you get errors?
+- Wrong answer:
 
-    ```SQL
-      SELECT *,
-            c.catalogpurchases + o.onlinepurchases
-      FROM catalog c
-        FULL JOIN online o ON c.customerid = o.customerid;
-    ```
+  ```SQL
+    SELECT *,
+          c.catalogpurchases + o.onlinepurchases
+    FROM catalog c
+      FULL JOIN online o ON c.customerid = o.customerid;
+  ```
 
--   Right answer
+- Right answer
 
-    ```SQL
-      SELECT *,
-            COALESCE(c.catalogpurchases + o.onlinepurchases) AS firstname,
-            COALESCE(c.lastname,o.lastname) AS lastname,
-            COALESCE(c.catalogpurchases,0) +COALESCE(o.onlinepurchases,0) AS total_sales
-      FROM catalog c
-        FULL JOIN online o ON c.customerid = o.customerid;
-    ```
+  ```SQL
+    SELECT *,
+          COALESCE(c.catalogpurchases + o.onlinepurchases) AS firstname,
+          COALESCE(c.lastname,o.lastname) AS lastname,
+          COALESCE(c.catalogpurchases,0) +COALESCE(o.onlinepurchases,0) AS total_sales
+    FROM catalog c
+      FULL JOIN online o ON c.customerid = o.customerid;
+  ```
 
 ## Exercise 4
 
 [Go Back to Summary](#summary)
 
--   How many iowa liquor vendors have more than \$1 million in 2014 sales (hint: use subquery to group sales by vendor)?
+- How many iowa liquor vendors have more than \$1 million in 2014 sales (hint: use subquery to group sales by vendor)?
 
 ```SQL
   WITH vendor_sales AS (
@@ -943,79 +940,79 @@
   SELECT COUNT(*) FROM vendor_sales;
 ```
 
--   Group sales by month with a subquery and then calculate cumulative sales by month for 2014 (using iowa sales table)
+- Group sales by month with a subquery and then calculate cumulative sales by month for 2014 (using iowa sales table)
 
-    ```SQL
-      WITH sale_by_month AS (
-          SELECT EXTRACT(YEAR FROM iowa_sales.date) AS YEAR,
-                EXTRACT(MONTH FROM iowa_sales.date) AS MONTH,
-                SUM(total) AS new_total
-          FROM iowa_sales
-          GROUP BY YEAR,
-                  MONTH
-      )
-      SELECT SUM(new_total) OVER (ORDER BY month)
-      FROM sale_by_month
-      WHERE year = 2014;
-    ```
+  ```SQL
+    WITH sale_by_month AS (
+        SELECT EXTRACT(YEAR FROM iowa_sales.date) AS YEAR,
+              EXTRACT(MONTH FROM iowa_sales.date) AS MONTH,
+              SUM(total) AS new_total
+        FROM iowa_sales
+        GROUP BY YEAR,
+                MONTH
+    )
+    SELECT SUM(new_total) OVER (ORDER BY month)
+    FROM sale_by_month
+    WHERE year = 2014;
+  ```
 
--   Alternative
+- Alternative
 
-    ```SQL
-      WITH monthly_sales AS (
-          SELECT EXTRACT(month FROM DATE) AS month,
+  ```SQL
+    WITH monthly_sales AS (
+        SELECT EXTRACT(month FROM DATE) AS month,
+            SUM(total) AS sales
+        FROM iowa_sales
+        WHERE EXTRACT(year FROM DATE) = 2014
+        GROUP BY month
+    )
+    SELECT month,
+          sales / 1000000. AS month_sales,
+          TO_CHAR(sales,'999,999,999'),
+          SUM(sales) OVER (ORDER BY month) / 1000000. AS cum_sales
+    FROM monthly_sales
+    ORDER BY month;
+  ```
+
+- Alternative with monthly sales
+
+  ```SQL
+    WITH monthly_sales AS (
+        SELECT EXTRACT(month FROM DATE) AS month,
+              EXTRACT(year FROM DATE) AS year,
               SUM(total) AS sales
-          FROM iowa_sales
-          WHERE EXTRACT(year FROM DATE) = 2014
-          GROUP BY month
-      )
-      SELECT month,
-            sales / 1000000. AS month_sales,
-            TO_CHAR(sales,'999,999,999'),
-            SUM(sales) OVER (ORDER BY month) / 1000000. AS cum_sales
-      FROM monthly_sales
-      ORDER BY month;
-    ```
+        FROM iowa_sales
+        GROUP BY month,
+                year
+    )
+    SELECT month,
+          year,
+          sales / 1000000. AS month_sales,
+          SUM(sales) OVER (PARTITION BY year ORDER BY month) / 1000000. AS cum_sales
+    FROM monthly_sales
+    ORDER BY year,
+            month;
+  ```
 
--   Alternative with monthly sales
+- Create a View that adds liquor type to the iowa product data. Don't forget to commit your changes.
 
-    ```SQL
-      WITH monthly_sales AS (
-          SELECT EXTRACT(month FROM DATE) AS month,
-                EXTRACT(year FROM DATE) AS year,
-                SUM(total) AS sales
-          FROM iowa_sales
-          GROUP BY month,
-                  year
-      )
-      SELECT month,
-            year,
-            sales / 1000000. AS month_sales,
-            SUM(sales) OVER (PARTITION BY year ORDER BY month) / 1000000. AS cum_sales
-      FROM monthly_sales
-      ORDER BY year,
-              month;
-    ```
+  ```SQL
+    IF EXISTS DROP TABLE new_iowa_products;
 
--   Create a View that adds liquor type to the iowa product data. Don't forget to commit your changes.
+    CREATE VIEW new_iowa_products AS (
+        SELECT CASE
+            WHEN i.category_name ILIKE '%whisky%' THEN 'whisky'
+            WHEN i.category_name ILIKE '%vodka%' THEN 'vodka'
+            WHEN i.category_name ILIKE '%tequila%' THEN 'tequila'
+            WHEN i.category_name ILIKE '%rum%' THEN 'rum'
+            WHEN i.category_name ILIKE '%brandy%' THEN 'brandy'
+            WHEN i.category_name ILIKE '%schnapps%' THEN 'schnapps' ELSE 'other'
+          END AS liquor_type,
+        * FROM iowa_products AS i
+    );
 
-    ```SQL
-      IF EXISTS DROP TABLE new_iowa_products;
+    COMMIT;
 
-      CREATE VIEW new_iowa_products AS (
-          SELECT CASE
-              WHEN i.category_name ILIKE '%whisky%' THEN 'whisky'
-              WHEN i.category_name ILIKE '%vodka%' THEN 'vodka'
-              WHEN i.category_name ILIKE '%tequila%' THEN 'tequila'
-              WHEN i.category_name ILIKE '%rum%' THEN 'rum'
-              WHEN i.category_name ILIKE '%brandy%' THEN 'brandy'
-              WHEN i.category_name ILIKE '%schnapps%' THEN 'schnapps' ELSE 'other'
-            END AS liquor_type,
-          * FROM iowa_products AS i
-      );
-
-      COMMIT;
-
-      SELECT *
-      FROM new_iowa_products;
-    ```
+    SELECT *
+    FROM new_iowa_products;
+  ```
