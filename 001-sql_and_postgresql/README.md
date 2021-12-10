@@ -17,6 +17,9 @@
     - [WHERE](#where)
     - [JOINS](#joins)
       - [Types of JOINS](#types-of-joins)
+    - [Grouping](#grouping)
+      - [Aggregation](#aggregation)
+      - [Having](#having)
 
 # SQL AND POSTGRESQL
 
@@ -607,4 +610,122 @@ Base query
    JOIN users AS u ON c.user_id = u.id
    WHERE
      p.user_id = c.user_id;
+```
+
+### Grouping
+
+- Reduces many rows down to fewer rows
+- Done by using the `GROUP BY` keyword
+- Visualizing the result is key to use
+
+> You can only select the `GROUP BY` condition, to
+
+```SQL
+  SELECT user_id
+  FROM
+    comments
+   GROUP BY user_id;
+
+  -- If you try to select different columns, the SQL will throw an error
+
+  SELECT user_id, contents
+  FROM
+    comments
+   GROUP BY user_id;
+
+  -- column "comments.contents" must appear in the GROUP BY clause or be used in an aggregate function
+```
+
+> To fix that, we need to use the aggregation function to return other columns
+
+#### Aggregation
+
+- Looks at many rows and calculates a single value
+- Words like `most`, `average`, `least` are sign that you need to use an aggregation
+- Reduces many values down to one
+- Done by using `aggregate functions`
+
+Some aggregate functions
+
+- `COUNT()` - Returns the number of values in a group of values
+- `SUM()` - Finds the **sum** of a group of numbers
+- `AVG()` - Finds the **average** of a group of numbers
+- `MIN()` - Returns the **minimum** value from a group of numbers
+- `MAX()` - Returns the **maximum** value from the group of numbers
+
+```SQL
+  SELECT MAX(id)
+  FROM comments;
+
+  -- 100 (max id in the table)
+```
+
+```SQL
+  -- Return only the unique ids
+  SELECT user_id
+  FROM comments
+  GROUP BY user_id;
+
+  -- Returns the largest id from a group
+  SELECT
+    user_id,
+    MAX(id)
+  FROM
+    comments
+  GROUP BY
+    user_id;
+
+  -- Returns the number of comments per user
+  SELECT
+    user_id,
+    COUNT(id) AS num_comments_created
+  FROM
+    comments
+  GROUP BY
+    user_id;
+
+  -- Count the number of comments per photo
+  SELECT
+    photo_id,
+    COUNT(*) AS num_comments_created
+  FROM
+    comments
+  GROUP BY
+    photo_id;
+```
+
+#### Having
+
+Fitlers the set of groups
+
+Usually when we have the `HAVING` keyword, probably we are going to use one of the `aggregation functions`
+
+```SQL
+  -- Select photo_id that has comments greater than 2, on the first 2 photos only
+  SELECT
+    photo_id,
+    COUNT(*)
+  FROM
+    comments
+  WHERE
+    photo_id < 3
+  GROUP BY
+    photo_id
+  HAVING
+    COUNT(*) > 2;
+```
+
+```SQL
+  -- Select user_id that has commented on the first 50 photos and the user added more than 20 comments on those photos
+  SELECT
+    user_id,
+    COUNT(*)
+  FROM
+    comments
+  WHERE
+    photo_id BETWEEN 1 AND 50
+  GROUP BY
+    user_id
+  HAVING
+    COUNT(*) > 20;
 ```
