@@ -11,15 +11,36 @@
       - [Update Data](#update-data)
       - [Delete Data](#delete-data)
     - [Math Operations](#math-operations)
+      - [More Operators](#more-operators)
     - [Name Custom Field](#name-custom-field)
     - [String Operations and Functions](#string-operations-and-functions)
   - [Filtering](#filtering)
     - [WHERE](#where)
-    - [JOINS](#joins)
+    - [JOIN](#join)
       - [Types of JOINS](#types-of-joins)
-    - [Grouping](#grouping)
+    - [GROUP BY (Groupping)](#group-by-groupping)
       - [Aggregation](#aggregation)
-      - [Having](#having)
+      - [HAVING](#having)
+  - [ORDER BY (SORT)](#order-by-sort)
+    - [OFFSET](#offset)
+    - [LIMIT](#limit)
+  - [UNION (Join Two Results)](#union-join-two-results)
+    - [UNION ALL](#union-all)
+    - [Types Of UNIONs](#types-of-unions)
+  - [SubQueries](#subqueries)
+    - [Inside SELECT](#inside-select)
+    - [Inside FROM](#inside-from)
+    - [With JOIN](#with-join)
+    - [With IN](#with-in)
+    - [With Extra Filter](#with-extra-filter)
+    - [Inside SELECT](#inside-select-1)
+    - [Inside SELECT Without FROM](#inside-select-without-from)
+  - [SELECT](#select)
+    - [SELECT DISTINCT (Unique Values)](#select-distinct-unique-values)
+    - [SELECT COUNT DISTINCT](#select-count-distinct)
+  - [GREATEST](#greatest)
+  - [LEAST](#least)
+  - [CASE STATEMENT - Generate New Column Base On Condition](#case-statement---generate-new-column-base-on-condition)
 
 # SQL AND POSTGRESQL
 
@@ -228,6 +249,48 @@ On delete option
     cities;
 ```
 
+#### More Operators
+
+Compare structure of data the subquery must return (single column)
+
+- `> ALL`
+- `< ALL`
+- `>= ALL`
+- `<= ALL`
+- `= ALL`
+- `<> ALL`
+
+- `> SOME`
+- `< SOME`
+- `>= SOME`
+- `<= SOME`
+- `= SOME`
+- `<> SOME`
+
+- `> ANY`
+- `< ANY`
+- `>= ANY`
+- `<= ANY`
+- `= ANY`
+- `<> ANY`
+
+```SQL
+  SELECT
+    name department,
+    price
+  FROM
+    products
+  WHERE
+    price > ALL (
+      SELECT
+        price
+      FROM
+        products
+      WHERE
+        department = 'Industrial'
+    )
+```
+
 ### Name Custom Field
 
 ```SQL
@@ -410,7 +473,7 @@ Order
       population / area > 6000;
   ```
 
-### JOINS
+### JOIN
 
 Base query
 
@@ -612,7 +675,7 @@ Base query
      p.user_id = c.user_id;
 ```
 
-### Grouping
+### GROUP BY (Groupping)
 
 - Reduces many rows down to fewer rows
 - Done by using the `GROUP BY` keyword
@@ -694,7 +757,7 @@ Some aggregate functions
     photo_id;
 ```
 
-#### Having
+#### HAVING
 
 Fitlers the set of groups
 
@@ -729,3 +792,838 @@ Usually when we have the `HAVING` keyword, probably we are going to use one of t
   HAVING
     COUNT(*) > 20;
 ```
+
+## ORDER BY (SORT)
+
+```SQL
+  SELECT *
+  FROM products
+  ORDER BY price;
+```
+
+Sorting by two criterieas and different sort method.
+
+```SQL
+  SELECT *
+  FROM products
+  ORDER BY price, weight DESC;
+```
+
+### OFFSET
+
+Select all the user, offset the first 40 users.
+
+```SQL
+  SELECT *
+  FROM users
+  OFFSET 40;
+```
+
+### LIMIT
+
+Limit the number of results
+
+```SQL
+  SELECT *
+  FROM users
+  OFFSET 40
+  LIMIT 2;
+```
+
+## UNION (Join Two Results)
+
+Join the result of two queries.
+
+**ATTENTION:** We can only use `UNION` with results that have the same columns names and compatible data type.
+
+```SQL
+  SELECT *
+  FROM products
+  ORDER BY price DESC
+  LIMIT 4;
+```
+
+| id  | name                     | department | price | weight |
+| --- | ------------------------ | ---------- | ----- | ------ |
+| 80  | Small Fresh Gloves       | Garden     | 991   | 8      |
+| 7   | Incredible Granite Mouse | Home       | 989   | 2      |
+| 38  | Awesome Fresh Keyboard   | Home       | 982   | 30     |
+| 46  | Incredible Granite Bacon | Music      | 982   | 9      |
+
+```SQL
+  SELECT *
+  FROM products
+  ORDER BY price / weight DESC
+  LIMIT 4;
+```
+
+| id  | name                     | department | price | weight |
+| --- | ------------------------ | ---------- | ----- | ------ |
+| 7   | Incredible Granite Mouse | Home       | 989   | 2      |
+| 86  | Refined Concrete Pants   | Sports     | 724   | 2      |
+| 24  | Small Plastic Soap       | Beauty     | 345   | 1      |
+| 1   | Practical Fresh Shirt    | Toys       | 876   | 3      |
+
+```SQL
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price DESC
+    LIMIT
+      4
+  )
+  UNION
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price / weight DESC
+    LIMIT
+      4
+  );
+```
+
+| id  | name                     | department | price | weight |
+| --- | ------------------------ | ---------- | ----- | ------ |
+| 38  | Awesome Fresh Keyboard   | Home       | 982   | 30     |
+| 86  | Refined Concrete Pants   | Sports     | 724   | 2      |
+| 46  | Incredible Granite Bacon | Music      | 982   | 9      |
+| 80  | Small Fresh Gloves       | Garden     | 991   | 8      |
+| 24  | Small Plastic Soap       | Beauty     | 345   | 1      |
+| 7   | Incredible Granite Mouse | Home       | 989   | 2      |
+| 1   | Practical Fresh Shirt    | Toys       | 876   | 3      |
+
+> The `UNION` removes duplicates
+
+### UNION ALL
+
+```SQL
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price DESC
+    LIMIT
+      4
+  )
+  UNION ALL
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price / weight DESC
+    LIMIT
+      4
+  );
+```
+
+| id  | name                     | department | price | weight |
+| --- | ------------------------ | ---------- | ----- | ------ |
+| 80  | Small Fresh Gloves       | Garden     | 991   | 8      |
+| 7   | Incredible Granite Mouse | Home       | 989   | 2      |
+| 38  | Awesome Fresh Keyboard   | Home       | 982   | 30     |
+| 46  | Incredible Granite Bacon | Music      | 982   | 9      |
+| 7   | Incredible Granite Mouse | Home       | 989   | 2      |
+| 86  | Refined Concrete Pants   | Sports     | 724   | 2      |
+| 24  | Small Plastic Soap       | Beauty     | 345   | 1      |
+| 1   | Practical Fresh Shirt    | Toys       | 876   | 3      |
+
+### Types Of UNIONs
+
+- `UNION` - Join together the results of two queries and remove duplicate rows
+- `UNION ALL` - Join together results of two queries
+- `INTERSECT` - Find the rows common in the results of two queries. Removes duplicates
+- `INTERSECT ALL` - Find the rows common in the results of two queries (it doesn't show all intersected items)
+- `EXCEPT` - Find the rows that are present in first query but not second query. Removes duplicates
+- `EXCEPT ALL` - Find the rows that are present in first query but not second query
+
+**INTERSECT**
+
+```SQL
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price DESC
+    LIMIT
+      4
+  )
+  INTERSECT
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price / weight DESC
+    LIMIT
+      4
+  );
+```
+
+| id  | name                     | department | price | weight |
+| --- | ------------------------ | ---------- | ----- | ------ |
+| 7   | Incredible Granite Mouse | Home       | 989   | 2      |
+
+**EXCPEPT**
+
+Only cares about the left selection (first query), and returns only the items that doesn't exist on the right selection
+
+> **ATTENTION** The order of the queries matter (left query vs right query)
+
+```SQL
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price DESC
+    LIMIT
+      4
+  )
+  EXCEPT
+  (
+    SELECT
+      *
+    FROM
+      products
+    ORDER BY
+      price / weight DESC
+    LIMIT
+      4
+  );
+```
+
+| id  | name                     | department | price | weight |
+| --- | ------------------------ | ---------- | ----- | ------ |
+| 38  | Awesome Fresh Keyboard   | Home       | 982   | 30     |
+| 46  | Incredible Granite Bacon | Music      | 982   | 9      |
+| 80  | Small Fresh Gloves       | Garden     | 991   | 8      |
+
+## SubQueries
+
+- Hard way
+
+  ```SQL
+    SELECT
+      MAX(price)
+    FROM
+      products
+    WHERE
+      department = 'Toys';
+  ```
+
+  | name |
+  | ---- |
+  | 947  |
+
+  ```SQL
+    SELECT
+      name,
+      price
+    FROM
+      products
+    WHERE
+      price > 947;
+  ```
+
+  | name                     | price |
+  | ------------------------ | ----- |
+  | Incredible Granite Mouse | 989   |
+  | Practical Rubber Mouse   | 948   |
+  | Handmade Rubber Chicken  | 959   |
+  | Awesome Fresh Keyboard   | 982   |
+  | Incredible Granite Bacon | 982   |
+  | Fantastic Fresh Chips    | 966   |
+  | Small Fresh Gloves       | 991   |
+
+- Using sub queries
+
+  ```SQL
+    SELECT
+      name,
+      price
+    FROM
+      products
+    WHERE
+      price > (
+        SELECT
+          MAX(price)
+        FROM
+          products
+        WHERE
+          department = 'Toys'
+      );
+  ```
+
+  | name                     | price |
+  | ------------------------ | ----- |
+  | Incredible Granite Mouse | 989   |
+  | Practical Rubber Mouse   | 948   |
+  | Handmade Rubber Chicken  | 959   |
+  | Awesome Fresh Keyboard   | 982   |
+  | Incredible Granite Bacon | 982   |
+  | Fantastic Fresh Chips    | 966   |
+  | Small Fresh Gloves       | 991   |
+
+### Inside SELECT
+
+If we want to add a sub query on the `SELECT` statement, we need to put a query that returns a single value.
+
+```SQL
+  SELECT
+    name,
+    price,
+    (
+      SELECT
+        MAX(price)
+      FROM
+        products
+    )
+  FROM
+    products
+  WHERE
+    price > 867;
+```
+
+| name                      | price | max |
+| ------------------------- | ----- | --- |
+| Practical Fresh Shirt     | 876   | 991 |
+| Incredible Granite Mouse  | 989   | 991 |
+| Generic Fresh Computer    | 926   | 991 |
+| Fantastic Metal Chair     | 887   | 991 |
+| Handcrafted Rubber Towels | 945   | 991 |
+| Practical Rubber Mouse    | 948   | 991 |
+| Handmade Rubber Chicken   | 959   | 991 |
+| Awesome Fresh Keyboard    | 982   | 991 |
+| Incredible Granite Bacon  | 982   | 991 |
+| Licensed Steel Towels     | 939   | 991 |
+| Sleek Fresh Gloves        | 919   | 991 |
+| Fantastic Fresh Chips     | 966   | 991 |
+| Small Fresh Gloves        | 991   | 991 |
+| Practical Steel Shoes     | 947   | 991 |
+
+```SQL
+  SELECT
+    name,
+    price,
+    (
+      SELECT
+        price
+      FROM
+        products
+       WHERE
+        id = 3
+    ) AS id_3_price
+  FROM
+    products
+  WHERE
+    price > 867;
+```
+
+| name                      | price | id_3_price |
+| ------------------------- | ----- | ---------- |
+| Practical Fresh Shirt     | 876   | 10         |
+| Incredible Granite Mouse  | 989   | 10         |
+| Generic Fresh Computer    | 926   | 10         |
+| Fantastic Metal Chair     | 887   | 10         |
+| Handcrafted Rubber Towels | 945   | 10         |
+| Practical Rubber Mouse    | 948   | 10         |
+| Handmade Rubber Chicken   | 959   | 10         |
+| Awesome Fresh Keyboard    | 982   | 10         |
+| Incredible Granite Bacon  | 982   | 10         |
+| Licensed Steel Towels     | 939   | 10         |
+| Sleek Fresh Gloves        | 919   | 10         |
+| Fantastic Fresh Chips     | 966   | 10         |
+| Small Fresh Gloves        | 991   | 10         |
+| Practical Steel Shoes     | 947   | 10         |
+
+### Inside FROM
+
+Any subquery, so log as the outer selects/wheres/etc... are compatible. In other words, we are saying to use a special set of rows.
+
+**ATTENTION** we need to give an alias applied to it
+
+Sub query
+
+```SQL
+  SELECT
+    name,
+    price / weight AS price_weight_ratio
+  FROM
+    products;
+```
+
+| name                  | price_weight_ratio |
+| --------------------- | ------------------ |
+| Practical Fresh Shirt | 292                |
+| Gorgeous Steel Towels | 25                 |
+| Rustic Plastic Bacon  | 1                  |
+| Tasty Wooden Ball     | 34                 |
+| Fantastic Soft Fish   | 1                  |
+| ...                   | ...                |
+
+```SQL
+  SELECT
+    name,
+    price_weight_ratio
+  FROM
+    (
+      SELECT
+        name,
+        price / weight AS price_weight_ratio
+      FROM
+        products
+    ) AS p
+  WHERE
+    price_weight_ratio > 5;
+```
+
+| name                     | price_weight_ratio |
+| ------------------------ | ------------------ |
+| Practical Fresh Shirt    | 292                |
+| Gorgeous Steel Towels    | 25                 |
+| Tasty Wooden Ball        | 34                 |
+| Gorgeous Concrete Towels | 29                 |
+| Incredible Granite Mouse | 494                |
+| Gorgeous Rubber Ball     | 200                |
+| Generic Fresh Computer   | 84                 |
+| Unbranded Cotton Shoes   | 10                 |
+| Fantastic Metal Chair    | 98                 |
+| ...                      | ...                |
+
+> NOTE: We are selecting `name` and `price_weight_ratio`. We can use our alias in our first query
+
+```SQL
+  SELECT
+    MAX(price)
+  FROM
+    products;
+```
+
+| max |
+| --- |
+| 991 |
+
+```SQL
+  SELECT
+    *
+  FROM
+    (
+      SELECT
+        MAX(price)
+      FROM
+        products
+    ) AS p;
+```
+
+| max |
+| --- |
+| 991 |
+
+```SQL
+  SELECT
+    user_id,
+    COUNT(*)
+  FROM
+    orders
+  GROUP BY
+    user_id;
+```
+
+| user_id | count |
+| ------- | ----- |
+| 42      | 12    |
+| 29      | 11    |
+| 4       | 11    |
+| 34      | 18    |
+| ...     | ...   |
+
+Average of orders
+
+```SQL
+  SELECT
+    AVG(order_count)
+  FROM
+    (
+      SELECT
+        user_id,
+        COUNT(*) AS order_count
+      FROM
+        orders
+      GROUP BY
+        user_id
+    ) AS p;
+```
+
+### With JOIN
+
+```SQL
+  SELECT
+    first_name
+  FROM
+    users
+  JOIN ( you_new_query ) AS o
+  ON o.user_id = users.id;
+
+  -- your_new_query
+  SELECT
+    user_id
+  FROM
+    orders
+  WHERE product_id = 3;
+```
+
+```SQL
+  SELECT
+    user_id
+  FROM
+    orders
+  WHERE product_id = 3;
+```
+
+| user_id |
+| ------- |
+| 34      |
+| 16      |
+| 45      |
+| 13      |
+| 41      |
+
+```SQL
+  SELECT
+    first_name
+  FROM
+    users
+    JOIN (
+      SELECT
+        user_id
+      FROM
+        orders
+      WHERE
+        product_id = 3
+    ) AS o ON o.user_id = users.id;
+```
+
+| first_name |
+| ---------- |
+| Luigi      |
+| Kaylah     |
+| Clara      |
+| Violette   |
+| Kathryn    |
+
+### With IN
+
+```SQL
+  SELECT
+    id
+  FROM
+    orders
+  WHERE product_id IN ( your_sub_query );
+
+  -- your_sub_query
+  SELECT
+    id AS product_id
+  FROM
+    products
+  WHERE
+    price / weight > 50;
+```
+
+| product_id |
+| ---------- |
+| 1          |
+| 7          |
+| 8          |
+| 9          |
+| ...        |
+
+```SQL
+  SELECT
+    id AS order_id
+  FROM
+    orders
+  WHERE product_id IN ( SELECT
+    id
+  FROM
+    products
+  WHERE
+    price / weight > 50 );
+```
+
+| order_id |
+| -------- |
+| 13       |
+| 15       |
+| 18       |
+| 19       |
+| ...      |
+
+### With Extra Filter
+
+```SQL
+  SELECT
+    name, price
+  FROM
+    products
+  WHERE
+    price > (
+      SELECT
+        AVG(price)
+      FROM
+        products
+    )
+   ORDER BY price;
+```
+
+| name                     | price |
+| ------------------------ | ----- |
+| Intelligent Metal Mouse  | 509   |
+| Unbranded Granite Shirt  | 519   |
+| Intelligent Cotton Chips | 521   |
+| ...                      | ...   |
+
+```SQL
+  SELECT
+    name,
+    department,
+    price
+  FROM
+    products
+  WHERE
+    department NOT IN (
+      SELECT
+        department
+      FROM
+        products
+      WHERE
+        price < 100
+    )
+  ORDER BY
+    price;
+```
+
+| name                       | department | price |
+| -------------------------- | ---------- | ----- |
+| Practical Wooden Shoes     | Computers  | 112   |
+| Licensed Steel Towels      | Health     | 132   |
+| Fantastic Wooden Chair     | Jewelery   | 145   |
+| Awesome Steel Mouse        | Clothing   | 175   |
+| Awesome Cotton Salad       | Shoes      | 211   |
+| Handcrafted Fresh Sausages | Games      | 231   |
+| ...                        | ...        | ...   |
+
+```SQL
+  SELECT
+    name,
+    department,
+    price
+  FROM
+    products
+  WHERE
+    price
+```
+
+```SQL
+  SELECT
+    name,
+    department,
+    price
+  FROM
+    products AS p1
+  WHERE
+    p1.price = (
+      SELECT
+        MAX(p2.price)
+      FROM
+        products AS p2
+      WHERE
+        p2.department = p1.department
+    )
+  ORDER BY
+    price;
+```
+
+| name                     | department  | price |
+| ------------------------ | ----------- | ----- |
+| Handmade Granite Fish    | Electronics | 166   |
+| Gorgeous Concrete Towels | Grocery     | 328   |
+| Practical Plastic Towels | Games       | 379   |
+| Gorgeous Steel Towels    | Outdoors    | 412   |
+| Fantastic Cotton Shirt   | Health      | 496   |
+| ...                      | ...         | ...   |
+
+### Inside SELECT
+
+```SQL
+  SELECT
+    name,
+    (
+      SELECT
+        COUNT(*)
+      FROM
+        orders AS o
+      WHERE
+        o.product_id = p.id
+    ) AS total
+  FROM
+    products AS p;
+```
+
+| name                  | total |
+| --------------------- | ----- |
+| Practical Fresh Shirt | 7     |
+| Gorgeous Steel Towels | 4     |
+| Rustic Plastic Bacon  | 5     |
+| Tasty Wooden Ball     | 4     |
+| ...                   | ...   |
+
+### Inside SELECT Without FROM
+
+```SQL
+  SELECT
+  (
+    SELECT
+      MAX(price)
+    FROM
+      products
+  ),
+  (
+    SELECT
+      AVG(price)
+    FROM
+      products
+  );
+```
+
+| max | avg                  |
+| --- | -------------------- |
+| 991 | 498.7300000000000000 |
+
+## SELECT
+
+### SELECT DISTINCT (Unique Values)
+
+Returns only the unique values.
+
+```SQL
+  SELECT
+    DISTINCT department
+  FROM
+    products;
+```
+
+| department |
+| ---------- |
+| Tools      |
+| Eletronics |
+| ...        |
+
+### SELECT COUNT DISTINCT
+
+Return total of unique departments
+
+```SQL
+  SELECT
+    COUNT(DISTINCT department)
+  FROM
+    products;
+```
+
+Return the combination of department and names (unique)
+
+```SQL
+  SELECT
+    DISTINCT department, name
+  FROM
+    products;
+```
+
+| department | name                     |
+| ---------- | ------------------------ |
+| Kids       | Handcrafted Cotton Bacon |
+| Sports     | Unbranded Wooden Ball    |
+| Beauty     | Small Plastic Soap       |
+| Sports     | Handmade Plastic Gloves  |
+| ...        | ...                      |
+
+## GREATEST
+
+Find the greatest (max) value bettween numbers of values
+
+```SQL
+  SELECT
+    name,
+    weight,
+    GREATEST (weight * 2, 30)
+  FROM
+    products;
+```
+
+| name                  | weight | greatest |
+| --------------------- | ------ | -------- |
+| Practical Fresh Shirt | 3      | 30       |
+| Gorgeous Steel Towels | 16     | 32       |
+| Rustic Plastic Bacon  | 6      | 30       |
+| Tasty Wooden Ball     | 23     | 46       |
+
+## LEAST
+
+Just like `GREATEST`, returns the **mininum** value
+
+```SQL
+  SELECT
+    name,
+    price,
+    LEAST (price * 0.5, 400) black_friday
+  FROM
+    products;
+```
+
+| name                     | price | black_friday |
+| ------------------------ | ----- | ------------ |
+| Practical Fresh Shirt    | 876   | 400          |
+| Gorgeous Steel Towels    | 412   | 206.0        |
+| Rustic Plastic Bacon     | 10    | 5.0          |
+| Tasty Wooden Ball        | 796   | 398.0        |
+| Fantastic Soft Fish      | 10    | 5.0          |
+| Gorgeous Concrete Towels | 328   | 164.0        |
+| Incredible Granite Mouse | 989   | 400          |
+
+## CASE STATEMENT - Generate New Column Base On Condition
+
+```SQL
+  SELECT
+    name,
+    price,
+    (
+      CASE
+        WHEN price > 600 THEN 'high'
+        WHEN price > 300 THEN 'medium'
+        ELSE 'cheap'
+      END
+    ) AS tag
+  FROM
+    products;
+```
+
+| name                  | price | tag    |
+| --------------------- | ----- | ------ |
+| Practical Fresh Shirt | 876   | high   |
+| Gorgeous Steel Towels | 412   | medium |
+| Rustic Plastic Bacon  | 10    | cheap  |
+| Tasty Wooden Ball     | 796   | high   |
+| Fantastic Soft Fish   | 10    | cheap  |
