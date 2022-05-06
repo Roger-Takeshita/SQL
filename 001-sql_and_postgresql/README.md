@@ -4,6 +4,11 @@
   - [Links](#links)
   - [Basics](#basics)
     - [Data Type](#data-type)
+      - [Numbers](#numbers)
+      - [Character](#character)
+      - [Boolean](#boolean)
+      - [Times, Dates, and Timestamps](#times-dates-and-timestamps)
+      - [Interval](#interval)
     - [CRUD](#crud)
       - [Create Table](#create-table)
       - [Insert Data](#insert-data)
@@ -52,8 +57,78 @@
 
 ### Data Type
 
-`VARCHAR`: Variable length character
-`INTEGER`: Number without decimal, `-2.147.483.647 to +2.147.483.647`
+#### Numbers
+
+| Integer  | Range                                                    |
+| -------- | -------------------------------------------------------- |
+| smallint | -32768 to +32767                                         |
+| integer  | -2.147.483.647 to +2.147.483.647                         |
+| bigint   | -9.223.372.036.854.775.808 to +9.223.372.036.854.775.807 |
+
+| Serial      | Range                          |
+| ----------- | ------------------------------ |
+| smallserial | 1 to 32767                     |
+| serial      | 1 to 2.147.483.647             |
+| bigserial   | 1 to 9.223.372.036.854.775.807 |
+
+| Float            | Range                                             |
+| ---------------- | ------------------------------------------------- |
+| decimal          | 131072 digits before decimal point, 16383 after   |
+| numeric          | 131072 before decimal point, 16383 after          |
+| real             | 1E-37 to 1E37 with at least 6 places precision    |
+| double precision | 1E-307 to 1E308 with at least 15 places precision |
+| float            | same as real ou double precision                  |
+
+#### Character
+
+| Character   | Type                                                                           |
+| ----------- | ------------------------------------------------------------------------------ |
+| CHAR(5)     | Store some characters, length will always be 5 even if PG has to insert spaces |
+| VARHCAR     | Store any length of string                                                     |
+| VARHCAR(40) | Store a string upt to 40 characters, automatically remove extra characters     |
+| TEXT        | Store any length of string                                                     |
+
+#### Boolean
+
+| Boolean                 | Type  |
+| ----------------------- | ----- |
+| true, yes, on , 1, t, y | TRUE  |
+| false, no, off, 0, f, n | FALSE |
+| null                    | NULL  |
+
+#### Times, Dates, and Timestamps
+
+| Date              | Type             |
+| ----------------- | ---------------- |
+| 1980-11-20        | 20 November 1980 |
+| Nov-20-1980       | 20 November 1980 |
+| 20-Nov-1980       | 20 November 1980 |
+| 1980-November-20  | 20 November 1980 |
+| November 20, 1980 | 20 November 1980 |
+
+| Time     | Type no time zone   |
+| -------- | ------------------- |
+| 01:23 AM | 01:23, no time zone |
+| 05:23 PM | 17:23, no time zone |
+| 20:34    | 20:34, no time zone |
+
+| Time         | Type with time zone |
+| ------------ | ------------------- |
+| 01:23 AM EST | 01:23-05:00         |
+| 05:23 PM PST | 17:23-08:00         |
+| 05:23 PM UTC | 17:23+00:00         |
+
+| Time                     | Type with timestamps   |
+| ------------------------ | ---------------------- |
+| Nov-20-1980 05:23 PM PST | 1980-11-20 18:23:00-07 |
+
+#### Interval
+
+| Interval    | Type                    |
+| ----------- | ----------------------- |
+| 1 day       | 1 day                   |
+| 1 D         | 1 day                   |
+| 1 D 1 M 1 S | 1 day 1 minute 1 second |
 
 ### CRUD
 
